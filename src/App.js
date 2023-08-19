@@ -34,12 +34,15 @@ const App = () => {
       })
   
       const data = await response.json()
+      if (response.status !== 200) {
+        throw data.error || new Error(`Request failed with status ${response.status}`);
+      }
       console.log(data);
       setResponse(data.choices[0].text)
       setLoading(false)
     } catch (error) {
       console.log('error occured',error);
-      alert('Invalid API Key')
+      alert(error.message)
     }
 
   }
@@ -49,7 +52,7 @@ const App = () => {
     <h3 className='mt-3 text-primary'>Chat with me</h3>
       <Form onSubmit={handleSentData}>
         <Form.Control type='text' value={userInput} onChange={e => setUserInput(e.target.value)} />
-        <Button variant='info' type='submit' className='mt-3'>Submit</Button>
+        <Button variant='info' type='submit' className='mt-3' disabled={!userInput}>Submit</Button>
       </Form>
       <div className='mt-3'>
         {loading?<Spinner/>: response? response:'no questions asked'}
